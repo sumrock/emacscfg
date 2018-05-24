@@ -1,0 +1,321 @@
+(set-language-environment 'Chinese-GB18030)
+;;(set-language-environment 'UTF-8)
+;; (set-terminal-coding-system 'utf-8)
+;; (set-keyboard-coding-system 'utf-8)
+;; (set-buffer-file-coding-system 'utf-8)
+;; (cond ((eq system-type 'windows-nt) (set-file-name-coding-system 'gbk))
+;;       ((eq system-type 'cygwin) (set-file-name-coding-system 'utf-8))
+;;       (set-file-name-coding-system 'gbk))
+
+;; (prefer-coding-system (quote gb18030))
+;; (prefer-coding-system (quote utf-8))
+
+(set-coding-system-priority 'gb18030 'utf-8 'big5)
+
+;; this fontset config is stolen from https://gist.github.com/789643
+(defun my-setup-fontset ()
+  "fontset-standard を使ったフォント設定"
+  (interactive)
+  ;; fontset-standard
+  (dolist (target '(han kana hangul bopomofo))
+    (set-fontset-font "fontset-standard" target (font-spec :family "DengXian" :size 16)))
+  (dolist (target '(latin))
+    (set-fontset-font "fontset-standard" target (font-spec :family "Fira Mono" :size 14)))
+
+  ;; modify fontset-default for fallback
+  (set-fontset-font t nil (font-spec :family "Fira Mono" :size 14))
+
+  ;; Use the predefined fontset "fontset-standard"
+  (set-face-font 'default "fontset-standard"))
+
+(my-setup-fontset)
+(add-to-list 'default-frame-alist '(font . "fontset-standard"))
+
+(add-to-list 'load-path "~/site-lisp")
+
+;; (if (eq system-type 'windows-nt)
+;;     (add-to-list 'load-path "C:/Go/misc/emacs")
+;;   (add-to-list 'load-path "/cygdrive/c/Go/misc/emacs"))
+;(setq load-path (cons  "~/site-lisp/org-7.8.02/lisp" load-path))
+;(setq load-path (cons  "~/site-lisp/emacs-color-theme-solarized" load-path))
+;(setq load-path (cons  "~/site-lisp/color-theme-6.6.0" load-path))
+;(setq load-path (cons  "~/site-lisp/cc-mode" load-path))
+
+
+;(setq Info-additional-directory-list '("/usr/share/info" "D:/emacs-24.2/info"))
+;(setq Info-additional-directory-list '("/usr/share/info"))
+
+
+(setq ediff-diff-options "-d --strip-trailing-cr"
+      ibuffer-truncate-lines nil
+      password-cache-expiry nil
+      c-macro-preprocessor "cpp -E")
+
+(add-hook 'ibuffer-mode-hook '(lambda () (local-set-key "\M-o" (quote other-window))))
+(add-hook 'diff-mode-hook '(lambda () (local-set-key "\M-o" (quote other-window))))
+
+
+;; Auto fill mode
+;; --------------
+;;(add-hook 'text-mode-hook 'turn-on-auto-fill)
+
+(fset 'yes-or-no-p 'y-or-n-p)
+
+(global-set-key [f1] 'tmm-menubar)
+(global-set-key [f2] 'query-replace-regexp)
+(global-set-key [(shift f2)] 'replace-regexp)
+(global-set-key [f4] 'delete-other-windows)
+(global-set-key [f3] 'grep-find)
+(global-set-key [(shift f3)] 'grep)
+
+;;(global-set-key [f5] 'undo)             ; 或许 C-_ 或 C-/ 更方便
+;;(global-set-key [f6] 'eshell)           ; 一个 elisp 写的 shell
+;;(global-set-key [f7] 'calendar)         ; Emacs 的日历系统
+;;(global-set-key [f12] 'view-mode)        ; 只读方式查看文件
+(global-set-key [f8] 'ibuffer)   ; 跳转到 Emacs 的另一个窗口
+(global-set-key [f7] 'compile)   ; 在 Emacs 中编译
+(global-set-key [f5] 'gdb)   ; 在 Emacs 中调试
+;;(global-set-key [f8]  'repeat-complex-command)
+;;(global-set-key [f9]  'execute-extended-command)
+;;(global-set-key [f10] 'eval-expression)
+
+(global-set-key [f11] 'ediff-revision)
+(global-set-key [f12] 'ediff-buffers)
+(global-set-key [(shift f12)] 'ediff-directories)
+
+(global-set-key (kbd "C-<tab>") 'complete-symbol)
+(global-set-key [remap kill-ring-save] 'easy-kill)
+
+
+;; my key binding
+(global-set-key "\C-z" 'set-mark-command)
+(global-set-key "\C-xk" 'kill-this-buffer)
+(global-set-key "\M-o" 'other-window)
+(global-set-key "\M-`" 'next-error)
+(global-set-key "\M-/" 'hippie-expand)
+;; 基本不用 Emacs 的输入法，绑定给折行命令吧
+(global-set-key "\C-\\" 'toggle-truncate-lines)
+(global-set-key "\M-%" 'query-replace-regexp)
+(global-set-key "\M-+" 'mark-word)
+(global-set-key "\M-_" 'mark-end-of-sentence)
+
+(global-set-key "\C-x\C-z" 'pop-global-mark)
+
+;;(setq tab-stop-list '(4 8 12 16 20 24 28 32 36 40 44 48 52 56 60 64 68 72 76 80 84 88 92 96 100 104 108 112 116 120))
+(setq tab-width 4 indent-tabs-mode nil);设置Tab换为4个空格,不用Tab进行排版
+
+;; hippie-expand 所使用的补全函数及使用的顺序。
+(setq hippie-expand-try-functions-list
+      '(
+        try-expand-dabbrev
+        try-expand-dabbrev-visible
+        try-expand-dabbrev-all-buffers
+        try-expand-dabbrev-from-kill
+        try-expand-line
+        try-expand-line-all-buffers
+        try-expand-list
+        try-expand-list-all-buffers
+        try-complete-file-name
+        try-complete-file-name-partially
+        try-complete-lisp-symbol
+        try-complete-lisp-symbol-partially
+        try-expand-whole-kill))
+
+;; 复制(删除)目录的时，第归的复制(删除)其中的子目录。
+(setq dired-recursive-copies 'top)
+(setq dired-recursive-deletes 'top)
+
+(setq inhibit-startup-message t
+      report-emacs-bug-no-explanations t
+      default-major-mode 'text-mode
+;      require-final-newline nil
+;      mode-require-final-newline nil
+;      resize-mini-windows t
+;      track-eol nil
+;      kill-whole-line t
+;      Man-notify-method 'pushy
+;      woman-cache-level 2
+;      woman-cache-filename nil
+;;      confirm-kill-emacs nil
+      confirm-kill-emacs 'y-or-n-p
+      kill-ring-max 100
+;      vc-follow-symlinks t
+;      vc-suppress-confirm t
+;      enable-recursive-minibuffers t
+;      default-fill-column 78
+      isearch-allow-scroll t
+;      tooltip-gud-tips-p t
+      make-backup-files nil)
+
+
+(setq display-time-24hr-format t
+      display-time-day-and-date nil)
+
+;;;设置标题栏显示文件的完整路径名
+(setq frame-title-format
+   '("%S" (buffer-file-name "%f"
+    (dired-directory dired-directory "%b"))))
+
+
+(setq default-major-mode 'text-mode)
+(setq-default inhibit-eol-conversion nil)
+
+(setq comint-buffer-maximum-size 100000) ;comint buffer 最大100000行  
+
+;(minibuffer-electric-default-mode 1)
+;(mouse-avoidance-mode 'exile)
+;(partial-completion-mode 1)
+;(auto-compression-mode 1)
+(column-number-mode 1)
+(global-cwarn-mode 1)
+;(display-time-mode 1)
+(show-paren-mode 1)
+(tool-bar-mode -1)
+;(menu-bar-mode -1)
+;(icomplete-mode 1)
+;;(savehist-mode 1)
+;(transient-mark-mode 1)
+(size-indication-mode 1)
+(desktop-save-mode 1)
+(scroll-bar-mode -1)
+(horizontal-scroll-bar-mode -1)
+
+
+;; uniquify ;;
+(require 'uniquify)
+(setq uniquify-buffer-name-style 'forward)
+
+;;ido
+(require 'ido)
+(ido-everywhere 1)
+(ido-mode 1)
+
+;; CC Mode
+;; (add-hook 'c-mode-common-hook
+;;           '(lambda () (c-set-style "bsd")
+;;              (c-set-offset 'case-label 0)
+;;              (setq c-basic-offset 4
+;;                    tab-width 4
+;;                    ;; c-syntactic-indentation nil
+;;                    ;; comment-start "// "
+;;                    ;; comment-end ""
+;;                    indent-tabs-mode nil)
+;;              ;; case-fold-search nil)
+;;              ;; c-comment-start-regexp "/[*/]\\|ERRLOG\\|\\s!")
+;; ;;             (local-set-key "\M-?" 'semantic-ia-fast-jump)
+;;              (local-set-key "\M-?" 'find-tag-regexp)
+;;              (local-set-key (kbd "C-M-.") 'find-tag-other-window)
+;; ;;             (hide-ifdef-mode 1)
+;;              ))
+;; ;;             (interactive) (column-marker-1 80)))
+
+(add-hook 'sql-mode-hook '(lambda () (paragraph-indent-minor-mode)
+                            (sql-set-product 'oracle) ;默认oracle
+                            (setq tab-width 2
+                                  indent-tabs-mode nil)))
+
+(setq auto-mode-alist
+      (cons '("\\.[Mm]ak\\'" . makefile-gmake-mode)
+	    auto-mode-alist))
+
+(server-start)
+
+
+;; Insertion of Dates.
+(defun insert-date-string ()
+  "Insert a nicely formated date string."
+  (interactive)
+  (insert (format-time-string "liujun, %Y-%m-%d %H:%M")))
+
+;; C-c i calls insert-date-string
+(global-set-key (kbd "C-c i") 'insert-date-string)
+
+;; Don't copy files to open dired buffers via drag&drop
+(setq dired-dnd-protocol-alist nil)
+(setq compilation-scroll-output t)
+
+
+(defun maximize-frame ()
+  "Maximizes the active frame in Windows"
+  (interactive)
+  ;; Send a `WM_SYSCOMMAND' message to the active frame with the
+  ;; `SC_MAXIMIZE' parameter.
+  (when (eq system-type 'windows-nt)
+    (w32-send-sys-command 61488)))
+(add-hook 'window-setup-hook 'maximize-frame t)
+
+;; (require 'org-install)
+
+(global-set-key "\C-cl" 'org-store-link)
+(global-set-key "\C-ca" 'org-agenda)
+(global-set-key "\C-cb" 'org-iswitchb)
+(define-key global-map "\C-cc" 'org-capture)
+
+
+(setq org-log-done 'time)
+(setq org-default-notes-file  "~/org/notes.org")
+
+(setq org-capture-templates
+      '(("t" "Todo" entry (file+headline "~/org/todo.org" "Tasks")
+         "* TODO %?\n  %i\n  %a")
+        ("j" "Journal" entry (file+datetree "~/org/mynotes.org")
+         "* %?\nEntered on %U\n  %i\n ")))
+
+(defun open-org-workfile ()
+  (interactive)
+  (find-file "~/org/work.org"))
+
+;;(global-set-key [f9] 'open-org-workfile)
+
+(global-set-key [f9] '(lambda ()
+                        (interactive)
+                         (find-file "~/org/work.org")))
+
+(global-set-key [f10] '(lambda ()
+                        (interactive)
+                         (find-file "~/org/mynotes.org")))
+
+
+(global-set-key (kbd "C-<f6>") 'highlight-symbol-at-point) 
+(global-set-key (kbd "<f6>") 'highlight-symbol-next) 
+(global-set-key (kbd "S-<f6>") 'highlight-symbol-prev)
+
+(require 'helm)
+(require 'helm-config)
+
+(global-set-key (kbd "C-c h") 'helm-command-prefix)
+(global-unset-key (kbd "C-x c"))
+
+(setq helm-split-window-in-side-p t ; open helm buffer inside current window, not occupy whole other window
+      ;; helm-move-to-line-cycle-in-source t ; move to end or beginning of source when reaching top or bottom of source.
+      helm-ff-search-library-in-sexp t ; search for library in `require' and `declare-function' sexp.
+      ;; helm-scroll-amount 8 ; scroll 8 lines other window using M-<next>/M-<prior>
+      helm-ff-file-name-history-use-recentf t
+      helm-echo-input-in-header-line t)
+
+(setq helm-autoresize-max-height 0)
+(setq helm-autoresize-min-height 20)
+(helm-autoresize-mode 1)
+
+(helm-mode 1)
+
+(global-set-key (kbd "M-x") 'helm-M-x)
+(global-set-key (kbd "M-y") 'helm-show-kill-ring)
+(global-set-key (kbd "C-x b") 'helm-mini)
+(global-set-key (kbd "C-x C-f") 'helm-find-files)
+(global-set-key (kbd "C-h o") 'helm-occur)
+(global-set-key (kbd "C-h SPC") 'helm-all-mark-rings)
+
+
+(require 'goto-chg)
+(global-set-key (kbd "C-,") 'goto-last-change)
+(global-set-key (kbd "C-.") 'goto-last-change-reverse)
+
+
+(require 'company)                                   ; load company mode
+(require 'company-go)                                ; load company mode go backend
+
+(add-hook 'go-mode-hook (lambda ()
+                          (set (make-local-variable 'company-backends) '(company-go))
+                          (company-mode)))
+
